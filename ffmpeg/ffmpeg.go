@@ -9,7 +9,7 @@ import (
 
 const FFMPEG = "ffmpeg"
 
-func Convert(imagePaths []string, outputPath string) error {
+func GenerateVideo(imagePaths []string, outputPath string) error {
 	if len(imagePaths) == 0 {
 		return fmt.Errorf("at least one image is required")
 	}

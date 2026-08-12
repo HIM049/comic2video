@@ -25,6 +25,10 @@ func downloader(chapterUrl, path, imgUrl string) error {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
 	file, err := os.Create(path)
 	if err != nil {
 		return err
@@ -39,39 +43,37 @@ func downloader(chapterUrl, path, imgUrl string) error {
 	return nil
 }
 
-func DownloadCopymanga(url string) {
-	seriesId, chapterId, err := UrlParser(url)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
+func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 	chapterUrl := fmt.Sprintf("https://www.mangacopy.com/comic/%s", seriesId)
 	fullUrl := fmt.Sprintf("%s/chapter/%s", chapterUrl, chapterId)
 
-	finalPath := filepath.Join(config.BASE_PATH, "comic", seriesId, chapterId)
-	os.MkdirAll(finalPath, 0755)
+	comicPath := filepath.Join(config.COMIC_PATH, seriesId, chapterId)
+	os.MkdirAll(comicPath, 0755)
 
 	urls, err := GetChapterContent(chapterUrl, fullUrl)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	var filePaths []string
 	for ix, url := range urls {
-		path := filepath.Join(finalPath, fmt.Sprintf("img-%d.jpg", ix))
+		path := filepath.Join(comicPath, fmt.Sprintf("img-%d.jpg", ix))
 		filePaths = append(filePaths, path)
 
-		err := downloader(url, path, url)
+		err := downloader(chapterUrl, path, url)
 		if err != nil {
-			fmt.Println(err)
+			return err
 		}
 	}
 
-	path := filepath.Join(finalPath, "output.mp4")
-	err = ffmpeg.Convert(filePaths, path)
+	videoPath := filepath.Join(config.VIDEO_PATH, seriesId)
+	os.MkdirAll(videoPath, 0755)
+	path := filepath.Join(videoPath, fmt.Sprintf("%s.mp4", chapterId))
+
+	err = ffmpeg.GenerateVideo(filePaths, path)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
