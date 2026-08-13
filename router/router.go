@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
 	"gorm.io/gorm"
 )
@@ -52,9 +53,11 @@ func copymangaHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			// notfound
+			log.Info("Resourse not cached, downloading...")
 			w.WriteHeader(http.StatusAccepted)
 			err = copymanga.DownloadAndConvertCopymanga(series, chapter)
 			if err != nil {
+				log.Errorf("Failed to convert resource %v", err)
 				http.Error(w, fmt.Sprintf("Failed to convert resource %v", err), http.StatusInternalServerError)
 				return
 			}
@@ -67,6 +70,7 @@ func copymangaHandler(w http.ResponseWriter, r *http.Request) {
 
 			err = config.DB.Create(&newComic).Error
 			if err != nil {
+				log.Errorf("Failed to create record %v", err)
 				http.Error(w, fmt.Sprintf("Failed to create record %v", err), http.StatusInternalServerError)
 				return
 			}

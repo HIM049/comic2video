@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/charmbracelet/log"
 )
 
 func downloader(chapterUrl, path, imgUrl string) error {
@@ -57,6 +59,7 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 
 	var filePaths []string
 	for ix, url := range urls {
+		log.Debugf("Downloading images (%d/%d)", ix+1, len(urls))
 		path := filepath.Join(comicPath, fmt.Sprintf("img-%d.jpg", ix))
 		filePaths = append(filePaths, path)
 
