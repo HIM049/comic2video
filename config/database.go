@@ -3,7 +3,7 @@ package config
 import (
 	"comic_converter/model"
 
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 

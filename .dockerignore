@@ -1,0 +1,8 @@
+.git
+.github
+/app_data
+/tmp
+*.mp4
+*.exe
+Dockerfile
+.dockerignore

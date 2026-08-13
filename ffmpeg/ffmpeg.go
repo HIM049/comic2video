@@ -9,6 +9,16 @@ import (
 
 const FFMPEG = "ffmpeg"
 
+// resolveFFmpeg returns the ffmpeg binary path. It prefers the FFMPEG_BIN
+// environment variable (set in the Docker image) and falls back to resolving
+// `ffmpeg` on PATH.
+func resolveFFmpeg() string {
+	if bin := os.Getenv("FFMPEG_BIN"); bin != "" {
+		return bin
+	}
+	return FFMPEG
+}
+
 func GenerateVideo(imagePaths []string, outputPath string) error {
 	if len(imagePaths) == 0 {
 		return fmt.Errorf("at least one image is required")
@@ -54,7 +64,7 @@ func GenerateVideo(imagePaths []string, outputPath string) error {
 		outputPath,
 	)
 
-	command := exec.Command(FFMPEG, args...)
+	command := exec.Command(resolveFFmpeg(), args...)
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
 	if err := command.Run(); err != nil {
