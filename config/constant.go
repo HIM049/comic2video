@@ -1,6 +1,7 @@
 package config
 
-const VERSION = "0.1.0"
+// VERSION is overridden at build time by CI via -ldflags "-X comic_converter/config.VERSION=..."
+var VERSION = "testbuild"
 
 const BASE_PATH = "./app_data"
 const COMIC_PATH = "./app_data/comic"
