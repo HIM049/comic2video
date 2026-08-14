@@ -19,6 +19,10 @@ func UrlParser(rawURL string) (string, error) {
 
 	parts := strings.Split(strings.Trim(parsed.EscapedPath(), "/"), "/")
 
+	if len(parts) < 2 {
+		return "", fmt.Errorf("invalid 18comic URL: %q", rawURL)
+	}
+
 	var aid string
 	switch parts[0] {
 	case "photo":

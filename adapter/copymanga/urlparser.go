@@ -23,6 +23,9 @@ func UrlParser(rawURL string) (string, string, error) {
 	var seriesID, chapterID string
 	switch parts[0] {
 	case "comic":
+		if len(parts) < 4 {
+			return "", "", fmt.Errorf("invalid copymanga URL: %q", rawURL)
+		}
 		seriesID, err = url.PathUnescape(parts[1])
 		if err != nil {
 			return "", "", fmt.Errorf("decode series ID: %w", err)
@@ -32,6 +35,9 @@ func UrlParser(rawURL string) (string, string, error) {
 			return "", "", fmt.Errorf("decode chapter ID: %w", err)
 		}
 	case "h5":
+		if len(parts) < 4 {
+			return "", "", fmt.Errorf("invalid copymanga URL: %q", rawURL)
+		}
 		seriesID, err = url.PathUnescape(parts[2])
 		if err != nil {
 			return "", "", fmt.Errorf("decode series ID: %w", err)

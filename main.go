@@ -5,6 +5,7 @@ import (
 	"comic_converter/adapter/i8comic"
 	"comic_converter/config"
 	"comic_converter/router"
+	"comic_converter/service"
 	"fmt"
 	"net/http"
 	"os"
@@ -29,6 +30,7 @@ func main() {
 	case "serve":
 		os.MkdirAll(config.BASE_PATH, 0755)
 		config.InitDB()
+		service.Init()
 
 		r := router.InitRouter()
 
@@ -42,7 +44,7 @@ func main() {
 			log.Errorf("Failed to parse url: %v", err)
 			return
 		}
-		vp, err := copymanga.DownloadAndConvertCopymanga(s, c)
+		vp, err := copymanga.DownloadAndConvert(s, c)
 		if err != nil {
 			log.Errorf("Failed to convert: %v", err)
 			return

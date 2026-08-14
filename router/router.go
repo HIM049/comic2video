@@ -5,6 +5,8 @@ import (
 	"comic_converter/adapter/i8comic"
 	"comic_converter/config"
 	"comic_converter/model"
+	"comic_converter/service"
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -13,8 +15,6 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 func InitRouter() *chi.Mux {
@@ -40,14 +40,14 @@ func genericHandler(w http.ResponseWriter, r *http.Request) {
 	var videoPath string
 	switch parsed.Hostname() {
 	case "www.mangacopy.com":
-		vp, err := copymangaHandler(u)
+		vp, err := copymangaHandler(r.Context(), u)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		videoPath = vp
 	case "18comic.vip":
-		vp, err := i8comicHandler(u)
+		vp, err := i8comicHandler(r.Context(), u)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -78,94 +78,32 @@ func genericHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, "comic", t, file)
 }
 
-func copymangaHandler(url string) (string, error) {
+func copymangaHandler(ctx context.Context, url string) (string, error) {
 	series, chapter, err := copymanga.UrlParser(url)
 	if err != nil {
 		return "", err
 	}
 
-	var comic model.ComicCache
-	err = config.DB.
-		Where("source = ?", model.SourceCopymanga).
-		Where("comic_id = ?", chapter).
-		First(&comic).
-		Error
-
+	videoPath, err := service.GetOrCreateVideo(ctx, model.SourceCopymanga, chapter, url,
+		func() (string, error) { return copymanga.DownloadAndConvert(series, chapter) })
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			// other errors
-			return "", err
-		} else {
-			// notfound
-			log.Info("Resourse not cached, downloading...")
-			videoPath, err := copymanga.DownloadAndConvertCopymanga(series, chapter)
-			if err != nil {
-				log.Errorf("Failed to convert resource %v", err)
-				return "", err
-			}
-
-			newComic := model.ComicCache{
-				Uid:       uuid.NewString(),
-				Source:    model.SourceCopymanga,
-				ComicId:   chapter,
-				ComicUrl:  url,
-				VideoPath: videoPath,
-			}
-
-			err = config.DB.Create(&newComic).Error
-			if err != nil {
-				log.Errorf("Failed to create record %v", err)
-				return "", err
-			}
-			comic = newComic
-		}
+		log.Errorf("Failed to convert resource %v", err)
+		return "", err
 	}
-
-	return comic.VideoPath, nil
+	return videoPath, nil
 }
 
-func i8comicHandler(url string) (string, error) {
+func i8comicHandler(ctx context.Context, url string) (string, error) {
 	aid, err := i8comic.UrlParser(url)
 	if err != nil {
 		return "", err
 	}
 
-	var comic model.ComicCache
-	err = config.DB.
-		Where("source = ?", model.SourceI8comic).
-		Where("comic_id = ?", aid).
-		First(&comic).
-		Error
-
+	videoPath, err := service.GetOrCreateVideo(ctx, model.SourceI8comic, aid, url,
+		func() (string, error) { return i8comic.DownloadAndConvert(aid) })
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			// other errors
-			return "", err
-		} else {
-			// notfound
-			log.Info("Resourse not cached, downloading...")
-			videoPath, err := i8comic.DownloadAndConvert(aid)
-			if err != nil {
-				log.Errorf("Failed to convert resource %v", err)
-				return "", err
-			}
-
-			newComic := model.ComicCache{
-				Uid:       uuid.NewString(),
-				Source:    model.SourceI8comic,
-				ComicId:   aid,
-				ComicUrl:  url,
-				VideoPath: videoPath,
-			}
-
-			err = config.DB.Create(&newComic).Error
-			if err != nil {
-				log.Errorf("Failed to create record %v", err)
-				return "", err
-			}
-			comic = newComic
-		}
+		log.Errorf("Failed to convert resource %v", err)
+		return "", err
 	}
-
-	return comic.VideoPath, nil
+	return videoPath, nil
 }

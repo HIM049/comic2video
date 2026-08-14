@@ -45,7 +45,7 @@ func downloadImage(chapterUrl, path, imgUrl string) error {
 	return nil
 }
 
-func DownloadAndConvertCopymanga(seriesId, chapterId string) (string, error) {
+func DownloadAndConvert(seriesId, chapterId string) (string, error) {
 	chapterUrl := fmt.Sprintf("https://www.mangacopy.com/comic/%s", seriesId)
 	fullUrl := fmt.Sprintf("%s/chapter/%s", chapterUrl, chapterId)
 
