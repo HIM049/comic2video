@@ -45,7 +45,7 @@ func downloadImage(chapterUrl, path, imgUrl string) error {
 	return nil
 }
 
-func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
+func DownloadAndConvertCopymanga(seriesId, chapterId string) (string, error) {
 	chapterUrl := fmt.Sprintf("https://www.mangacopy.com/comic/%s", seriesId)
 	fullUrl := fmt.Sprintf("%s/chapter/%s", chapterUrl, chapterId)
 
@@ -54,7 +54,7 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 
 	urls, err := GetChapterContent(chapterUrl, fullUrl)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	var filePaths []string
@@ -65,7 +65,7 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 
 		err := downloadImage(chapterUrl, path, url)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
@@ -75,8 +75,8 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 
 	err = ffmpeg.GenerateVideo(filePaths, path)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return path, nil
 }

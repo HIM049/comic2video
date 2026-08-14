@@ -30,10 +30,10 @@ func DownloadChapter(aid string) ([]string, error) {
 	return images, nil
 }
 
-func DownloadAndConvert(aid string) error {
+func DownloadAndConvert(aid string) (string, error) {
 	imgPaths, err := DownloadChapter(aid)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	os.MkdirAll(config.I8_VIDEO_PATH, 0755)
@@ -41,8 +41,8 @@ func DownloadAndConvert(aid string) error {
 
 	err = ffmpeg.GenerateVideo(imgPaths, path)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return path, nil
 }

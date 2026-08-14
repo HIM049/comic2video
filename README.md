@@ -4,8 +4,8 @@ A eszy comic to video service
 ## TODO
 
 - [x] 18comic适配
-- [ ] 18comic服务适配
-- [ ] URL 智能识别
+- [x] 18comic服务适配
+- [x] URL 智能识别
 - [ ] 合并转换函数调用
 - [ ] 通过数据库和哈希池管理视频文件？
 - [ ] 任务队列和等待系统

@@ -25,6 +25,7 @@ func main() {
 
 		log.Info("Server running on :8080")
 		http.ListenAndServe(":8080", r)
+		return
 
 	case "copymanga":
 		s, c, err := copymanga.UrlParser(os.Args[2])
@@ -32,11 +33,13 @@ func main() {
 			log.Errorf("Failed to parse url: %v", err)
 			return
 		}
-		err = copymanga.DownloadAndConvertCopymanga(s, c)
+		vp, err := copymanga.DownloadAndConvertCopymanga(s, c)
 		if err != nil {
 			log.Errorf("Failed to convert: %v", err)
 			return
 		}
+		log.Infof("Download Successfully. Video Path: %s", vp)
+		return
 
 	case "18comic":
 		aid, err := i8comic.UrlParser(os.Args[2])
@@ -44,13 +47,15 @@ func main() {
 			log.Errorf("Failed to parse url: %v", err)
 			return
 		}
-		err = i8comic.DownloadAndConvert(aid)
+		vp, err := i8comic.DownloadAndConvert(aid)
 		if err != nil {
 			log.Errorf("Failed to test: %v", err)
 			return
 		}
+		log.Infof("Download Successfully. Video Path: %s", vp)
+		return
+
 	default:
 		panic("unknown command")
-
 	}
 }

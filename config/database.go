@@ -15,7 +15,7 @@ func InitDB() {
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.Comic{})
+	db.AutoMigrate(&model.ComicCache{})
 
 	DB = db
 }
