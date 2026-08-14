@@ -1,9 +1,9 @@
 package router
 
 import (
+	"comic_converter/adapter/copymanga"
+	"comic_converter/adapter/i8comic"
 	"comic_converter/config"
-	"comic_converter/copymanga"
-	"comic_converter/i8comic"
 	"comic_converter/model"
 	"fmt"
 	"net/http"

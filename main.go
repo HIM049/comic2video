@@ -1,10 +1,11 @@
 package main
 
 import (
+	"comic_converter/adapter/copymanga"
+	"comic_converter/adapter/i8comic"
 	"comic_converter/config"
-	"comic_converter/copymanga"
-	"comic_converter/i8comic"
 	"comic_converter/router"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -16,7 +17,15 @@ func main() {
 	log.SetDefault(logger)
 	log.SetLevel(log.DebugLevel)
 
+	if len(os.Args) < 2 {
+		printHelp()
+		return
+	}
+
 	switch os.Args[1] {
+	case "version":
+		log.Infof("Version: %s", config.VERSION)
+		return
 	case "serve":
 		os.MkdirAll(config.BASE_PATH, 0755)
 		config.InitDB()
@@ -56,6 +65,21 @@ func main() {
 		return
 
 	default:
-		panic("unknown command")
+		printHelp()
+		return
 	}
+}
+
+func printHelp() {
+
+	help := `Comic Converter Menu
+Usage:
+  comic_parser <command> [args]
+Commands:
+  version  Print the app version
+  serve    Start the server
+  copymanga <url>  Convert a copymanga comic
+  18comic <url>  Convert an 18comic comic
+  `
+	fmt.Println(help)
 }
