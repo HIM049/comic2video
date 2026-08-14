@@ -4,6 +4,8 @@ package config
 var VERSION = "testbuild"
 
 const BASE_PATH = "./app_data"
-const COMIC_PATH = "./app_data/comic"
-const VIDEO_PATH = "./app_data/video"
+const CPCOMIC_PATH = "./app_data/copycomic"
+const I8COMIC_PATH = "./app_data/i8comic"
+const CP_VIDEO_PATH = "./app_data/cpvideo"
+const I8_VIDEO_PATH = "./app_data/i8video"
 const DB_FILE_PATH = "./app_data/storage.db"

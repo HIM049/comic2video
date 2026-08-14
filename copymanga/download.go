@@ -12,7 +12,7 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-func downloader(chapterUrl, path, imgUrl string) error {
+func downloadImage(chapterUrl, path, imgUrl string) error {
 	req, err := http.NewRequest("GET", imgUrl, nil)
 	if err != nil {
 		return err
@@ -49,7 +49,7 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 	chapterUrl := fmt.Sprintf("https://www.mangacopy.com/comic/%s", seriesId)
 	fullUrl := fmt.Sprintf("%s/chapter/%s", chapterUrl, chapterId)
 
-	comicPath := filepath.Join(config.COMIC_PATH, seriesId, chapterId)
+	comicPath := filepath.Join(config.CPCOMIC_PATH, seriesId, chapterId)
 	os.MkdirAll(comicPath, 0755)
 
 	urls, err := GetChapterContent(chapterUrl, fullUrl)
@@ -63,13 +63,13 @@ func DownloadAndConvertCopymanga(seriesId, chapterId string) error {
 		path := filepath.Join(comicPath, fmt.Sprintf("img-%d.jpg", ix))
 		filePaths = append(filePaths, path)
 
-		err := downloader(chapterUrl, path, url)
+		err := downloadImage(chapterUrl, path, url)
 		if err != nil {
 			return err
 		}
 	}
 
-	videoPath := filepath.Join(config.VIDEO_PATH, seriesId)
+	videoPath := filepath.Join(config.CP_VIDEO_PATH, seriesId)
 	os.MkdirAll(videoPath, 0755)
 	path := filepath.Join(videoPath, fmt.Sprintf("%s.mp4", chapterId))
 

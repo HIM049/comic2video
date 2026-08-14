@@ -79,7 +79,7 @@ func copymangaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// find and open video file
-	videoPath := filepath.Join(config.VIDEO_PATH, series)
+	videoPath := filepath.Join(config.CP_VIDEO_PATH, series)
 	path := filepath.Join(videoPath, fmt.Sprintf("%s.mp4", chapter))
 	file, err := os.Open(path)
 	if err != nil {

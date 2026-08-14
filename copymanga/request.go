@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type url struct {
+type imgUrl struct {
 	Url string `json:"url"`
 }
 
@@ -38,7 +38,7 @@ func GetChapterContent(chapterUrl, fullUrl string) ([]string, error) {
 
 	list, err := decryption(cct, contentKey)
 
-	var urls []url
+	var urls []imgUrl
 	err = json.Unmarshal(list, &urls)
 	if err != nil {
 		return nil, err
