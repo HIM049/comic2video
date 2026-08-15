@@ -1,5 +1,5 @@
-# Comic Converter
-A eszy comic to video service
+# Comic2Video (comic to video)
+A simple service that can download manga and supply by video
 
 ## TODO
 

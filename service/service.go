@@ -1,8 +1,8 @@
 package service
 
 import (
-	"comic_converter/config"
-	"comic_converter/model"
+	"comic2video/config"
+	"comic2video/model"
 	"context"
 
 	"github.com/charmbracelet/log"

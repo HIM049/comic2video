@@ -1,4 +1,4 @@
-module comic_converter
+module comic2video
 
 go 1.25.6
 

@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/comic_converter
+  IMAGE_NAME: ${{ github.repository_owner }}/comic2video
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
       - name: Build Linux Binary
         run: |
           VERSION=$(git describe --tags --abbrev=0 --always)
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w -X comic_converter/config.VERSION=${VERSION}" -o comic_converter .
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w -X comic2video/config.VERSION=${VERSION}" -o comic2video .
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -68,7 +68,7 @@ jobs:
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          packages: comic_converter
+          packages: comic2video
           keep-n-tagged: 1
           exclude-tags: latest
           delete-untagged: true

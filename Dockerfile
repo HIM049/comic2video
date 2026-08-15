@@ -5,10 +5,10 @@ RUN apk add --no-cache ffmpeg ca-certificates tzdata
 ENV FFMPEG_BIN=/usr/bin/ffmpeg
 
 WORKDIR /app
-COPY comic_converter /usr/local/bin/comic_converter
+COPY comic2video /usr/local/bin/comic2video
 
 VOLUME ["/app/app_data"]
 
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/comic_converter"]
+ENTRYPOINT ["/usr/local/bin/comic2video"]
 CMD ["serve"]

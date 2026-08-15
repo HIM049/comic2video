@@ -1,7 +1,7 @@
 package i8comic
 
 import (
-	"comic_converter/config"
+	"comic2video/config"
 	"fmt"
 	"io"
 	"net/http"

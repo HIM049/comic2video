@@ -1,7 +1,7 @@
 package config
 
 import (
-	"comic_converter/model"
+	"comic2video/model"
 
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"

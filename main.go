@@ -1,11 +1,11 @@
 package main
 
 import (
-	"comic_converter/adapter/copymanga"
-	"comic_converter/adapter/i8comic"
-	"comic_converter/config"
-	"comic_converter/router"
-	"comic_converter/service"
+	"comic2video/adapter/copymanga"
+	"comic2video/adapter/i8comic"
+	"comic2video/config"
+	"comic2video/router"
+	"comic2video/service"
 	"fmt"
 	"net/http"
 	"os"
@@ -74,7 +74,7 @@ func main() {
 
 func printHelp() {
 
-	help := `Comic Converter Menu
+	help := `Comic2Video Menu
 Usage:
   comic_parser <command> [args]
 Commands:

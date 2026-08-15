@@ -1,11 +1,11 @@
 package router
 
 import (
-	"comic_converter/adapter/copymanga"
-	"comic_converter/adapter/i8comic"
-	"comic_converter/config"
-	"comic_converter/model"
-	"comic_converter/service"
+	"comic2video/adapter/copymanga"
+	"comic2video/adapter/i8comic"
+	"comic2video/config"
+	"comic2video/model"
+	"comic2video/service"
 	"context"
 	"fmt"
 	"net/http"
@@ -20,14 +20,14 @@ import (
 func InitRouter() *chi.Mux {
 	r := chi.NewRouter()
 	r.Get("/", defaultHandler)
-	r.Get("/m2v", genericHandler)
+	r.Get("/c2v", genericHandler)
 
 	return r
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, "Comic Converter - %s", config.VERSION)
+	fmt.Fprintf(w, "Comic2Video - %s\n Source: https://github.com/HIM049/comic2video (gonna public)", config.VERSION)
 }
 
 func genericHandler(w http.ResponseWriter, r *http.Request) {

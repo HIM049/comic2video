@@ -1,8 +1,8 @@
 package i8comic
 
 import (
-	"comic_converter/config"
-	"comic_converter/ffmpeg"
+	"comic2video/config"
+	"comic2video/ffmpeg"
 	"fmt"
 	"os"
 	"path/filepath"

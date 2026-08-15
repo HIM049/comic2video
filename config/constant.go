@@ -1,6 +1,6 @@
 package config
 
-// VERSION is overridden at build time by CI via -ldflags "-X comic_converter/config.VERSION=..."
+// VERSION is overridden at build time by CI via -ldflags "-X comic2video/config.VERSION=..."
 var VERSION = "testbuild"
 
 const BASE_PATH = "./app_data"
