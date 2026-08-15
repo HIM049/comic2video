@@ -17,12 +17,9 @@ func GetChapterContent(url string) ([]string, error) {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0")
+	setBrowserHeaders(req)
 	req.Header.Set("Referer", url)
-	req.Header.Set("Sec-Fetch-Dest", "document")
-	req.Header.Set("Sec-Fetch-Mode", "navigate")
-	req.Header.Set("Sec-Fetch-Site", "same-origin")
-	req.Header.Set("Sec-Fetch-User", "?1")
+	req.Header.Set("Cookie", sessionCookie())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -54,12 +51,9 @@ func downloadImage(url, aid string) (string, error) {
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0")
+	setBrowserHeaders(req)
 	req.Header.Set("Referer", fmt.Sprintf("https://18comic.vip/photo/%s", aid))
-	req.Header.Set("Sec-Fetch-Dest", "document")
-	req.Header.Set("Sec-Fetch-Mode", "navigate")
-	req.Header.Set("Sec-Fetch-Site", "same-origin")
-	req.Header.Set("Sec-Fetch-User", "?1")
+	req.Header.Set("Cookie", sessionCookie())
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

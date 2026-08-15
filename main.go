@@ -32,6 +32,11 @@ func main() {
 		config.InitDB()
 		service.Init()
 
+		if err := i8comic.InitSession(); err != nil {
+			log.Errorf("Failed to init 18comic session: %v", err)
+			return
+		}
+
 		r := router.InitRouter()
 
 		log.Info("Server running on :8080")
@@ -56,6 +61,10 @@ func main() {
 		aid, err := i8comic.UrlParser(os.Args[2])
 		if err != nil {
 			log.Errorf("Failed to parse url: %v", err)
+			return
+		}
+		if err := i8comic.InitSession(); err != nil {
+			log.Errorf("Failed to init 18comic session: %v", err)
 			return
 		}
 		vp, err := i8comic.DownloadAndConvert(aid)
