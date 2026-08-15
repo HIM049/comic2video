@@ -29,6 +29,7 @@ func main() {
 		return
 	case "serve":
 		os.MkdirAll(config.BASE_PATH, 0755)
+		config.Init()
 		config.InitDB()
 		service.Init()
 

@@ -9,7 +9,7 @@ A simple service that can download manga and supply by video
 - [x] 任务队列和等待系统
 - [ ] 合并转换函数调用
 - [ ] 通过数据库和哈希池管理视频文件？
-- [ ] 服务读取环境变量设置
+- [x] 服务读取环境变量设置
 - [ ] 失败任务冷却
 
 

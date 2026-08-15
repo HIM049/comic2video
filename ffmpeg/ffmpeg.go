@@ -1,16 +1,13 @@
 package ffmpeg
 
 import (
+	"comic2video/config"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
-
-const FFMPEG = "ffmpeg"
-const FFMPEG_THREADS = "1"
-const BatchSize = 4
 
 // GenerateVideo 将图片序列编码为视频。图片分批编码为片段后无损合并。
 func GenerateVideo(imagePaths []string, outputPath string) error {
@@ -21,14 +18,14 @@ func GenerateVideo(imagePaths []string, outputPath string) error {
 		return fmt.Errorf("output path is required")
 	}
 
-	if BatchSize <= 0 {
+	if config.Cfg.Service.BatchSize <= 0 {
 		return encodeImageBatch(imagePaths, outputPath)
 	}
 
 	var partPaths []string
-	for start := 0; start < len(imagePaths); start += BatchSize {
-		end := min(start+BatchSize, len(imagePaths))
-		partPath := fmt.Sprintf("%s.part%d.mp4", outputPath, start/BatchSize)
+	for start := 0; start < len(imagePaths); start += config.Cfg.Service.BatchSize {
+		end := min(start+config.Cfg.Service.BatchSize, len(imagePaths))
+		partPath := fmt.Sprintf("%s.part%d.mp4", outputPath, start/config.Cfg.Service.BatchSize)
 		if err := encodeImageBatch(imagePaths[start:end], partPath); err != nil {
 			return err
 		}
@@ -67,7 +64,7 @@ func encodeImageBatch(imagePaths []string, outputPath string) error {
 		"-filter_complex", strings.Join(filters, ";"),
 		"-map", "[outv]",
 		"-c:v", "libx264",
-		"-threads", FFMPEG_THREADS,
+		"-threads", config.Cfg.Service.FfmpegThreads,
 		"-preset", "veryfast",
 		"-crf", "18",
 		"-pix_fmt", "yuv420p",
@@ -84,7 +81,7 @@ func encodeImageBatch(imagePaths []string, outputPath string) error {
 		outputPath,
 	)
 
-	command := exec.Command(FFMPEG, args...)
+	command := exec.Command(config.Cfg.Service.FfmpegPath, args...)
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
 	if err := command.Run(); err != nil {
@@ -120,7 +117,7 @@ func concatParts(partPaths []string, outputPath string) error {
 		"-c", "copy",
 		outputPath,
 	}
-	command := exec.Command(FFMPEG, args...)
+	command := exec.Command(config.Cfg.Service.FfmpegPath, args...)
 	command.Stdout = os.Stdout
 	command.Stderr = os.Stderr
 	if err := command.Run(); err != nil {
