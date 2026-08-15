@@ -48,6 +48,7 @@ func GenerateVideo(imagePaths []string, outputPath string) error {
 		"-filter_complex", strings.Join(filters, ";"),
 		"-map", "[outv]",
 		"-c:v", "libx264",
+		"-threads", "1",
 		"-preset", "medium",
 		"-crf", "18",
 		"-pix_fmt", "yuv420p",
