@@ -27,7 +27,7 @@ func InitRouter() *chi.Mux {
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprintf(w, "Comic2Video - %s\n Source: https://github.com/HIM049/comic2video (gonna public)", config.VERSION)
+	fmt.Fprintf(w, "Comic2Video - %s\nhttps://github.com/HIM049/comic2video (gonna public)", config.VERSION)
 }
 
 func genericHandler(w http.ResponseWriter, r *http.Request) {
