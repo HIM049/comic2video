@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/charmbracelet/log"
 )
@@ -57,16 +58,40 @@ func DownloadAndConvert(seriesId, chapterId string) (string, error) {
 		return "", err
 	}
 
-	var filePaths []string
-	for ix, url := range urls {
-		log.Debugf("Downloading images (%d/%d)", ix+1, len(urls))
-		path := filepath.Join(comicPath, fmt.Sprintf("img-%d.jpg", ix))
-		filePaths = append(filePaths, path)
+	sem := make(chan struct{}, config.Cfg.Service.DownloadThreads)
+	errCh := make(chan error, len(urls))
+	filePaths := make([]string, len(urls))
+	var wg sync.WaitGroup
 
-		err := downloadImage(chapterUrl, path, url)
-		if err != nil {
-			return "", err
-		}
+	// download images
+	for ix, url := range urls {
+		wg.Add(1)
+		go func() {
+			sem <- struct{}{}
+			defer func() {
+				wg.Done()
+				<-sem
+				log.Debugf("Finish download image (%d)", ix+1)
+			}()
+
+			log.Debugf("Start downloading image (%d)", ix+1)
+			path := filepath.Join(comicPath, fmt.Sprintf("img-%d.jpg", ix))
+
+			if err := downloadImage(chapterUrl, path, url); err != nil {
+				errCh <- err
+				return
+			}
+
+			filePaths[ix] = path
+		}()
+	}
+
+	// wait jobs finish
+	wg.Wait()
+	close(errCh)
+
+	if err := <-errCh; err != nil {
+		return "", err
 	}
 
 	videoPath := filepath.Join(config.CP_VIDEO_PATH, seriesId)

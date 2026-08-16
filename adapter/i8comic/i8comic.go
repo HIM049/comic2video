@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/charmbracelet/log"
 )
@@ -18,16 +19,41 @@ func DownloadChapter(aid string) ([]string, error) {
 		return nil, err
 	}
 
-	var images []string
+	sem := make(chan struct{}, config.Cfg.Service.DownloadThreads)
+	errCh := make(chan error, len(urls))
+	filePaths := make([]string, len(urls))
+	var wg sync.WaitGroup
+
+	// download images
 	for ix, url := range urls {
-		log.Debugf("Downloading images (%d/%d)", ix+1, len(urls))
-		imagePath, err := downloadImage(url, aid)
-		if err != nil {
-			return nil, err
-		}
-		images = append(images, imagePath)
+		wg.Add(1)
+		go func() {
+			sem <- struct{}{}
+			defer func() {
+				wg.Done()
+				<-sem
+				log.Debugf("Finish download image (%d)", ix+1)
+			}()
+
+			log.Debugf("Start downloading image (%d)", ix+1)
+			imagePath, err := downloadImage(url, aid)
+			if err != nil {
+				errCh <- err
+				return
+			}
+
+			filePaths[ix] = imagePath
+		}()
 	}
-	return images, nil
+
+	// wait jobs finish
+	wg.Wait()
+	close(errCh)
+
+	if err := <-errCh; err != nil {
+		return nil, err
+	}
+	return filePaths, nil
 }
 
 func DownloadAndConvert(aid string) (string, error) {

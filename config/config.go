@@ -10,9 +10,10 @@ import (
 var Cfg Config
 
 type Service struct {
-	FfmpegPath    string `json:"ffmpeg_path"`
-	FfmpegThreads string `json:"ffmpeg_threads"`
-	BatchSize     int    `json:"batch_size"`
+	FfmpegPath      string `json:"ffmpeg_path"`
+	FfmpegThreads   string `json:"ffmpeg_threads"`
+	DownloadThreads int    `json:"download_threads"`
+	BatchSize       int    `json:"batch_size"`
 }
 
 type Config struct {
@@ -30,15 +31,11 @@ func Init() {
 }
 
 func initService() *Service {
-	var size int
-	s, err := strconv.Atoi(getEnv("BATCH_SIZE"))
-	if err == nil {
-		size = s
-	}
 	return &Service{
-		FfmpegPath:    getEnvOrDefault("FFMPEG_PATH", "ffmpeg"),
-		FfmpegThreads: getEnvOrDefault("FFMPEG_THREADS", "8"),
-		BatchSize:     size,
+		FfmpegPath:      getEnvOrDefault("FFMPEG_PATH", "ffmpeg"),
+		FfmpegThreads:   getEnvOrDefault("FFMPEG_THREADS", "8"),
+		DownloadThreads: getIntEnvOrDefault("DOWNLOAD_THREADS", 1),
+		BatchSize:       getIntEnvOrDefault("BATCH_SIZE", 0),
 	}
 }
 
@@ -57,4 +54,19 @@ func getEnvOrDefault(key string, def string) string {
 	}
 
 	return def
+}
+
+// getEnv reads an environment variable, panics if not set.
+func getIntEnvOrDefault(key string, def int) int {
+	val, ok := os.LookupEnv(key)
+	if !ok {
+		return def
+	}
+
+	value, err := strconv.Atoi(val)
+	if err != nil {
+		value = def
+	}
+
+	return value
 }

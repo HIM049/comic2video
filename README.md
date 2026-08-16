@@ -11,6 +11,8 @@ A simple service that can download manga and supply by video
 - [ ] 通过数据库和哈希池管理视频文件？
 - [x] 服务读取环境变量设置
 - [ ] 失败任务冷却
+- [ ] 可选目录清理
+- [ ] 合并多线程下载
 
 
 ## 架构
