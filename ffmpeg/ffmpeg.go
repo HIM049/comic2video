@@ -115,6 +115,7 @@ func concatParts(partPaths []string, outputPath string) error {
 		"-safe", "0",
 		"-i", listPath,
 		"-c", "copy",
+		"-movflags", "+faststart",
 		outputPath,
 	}
 	command := exec.Command(config.Cfg.Service.FfmpegPath, args...)
