@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 // GetChapterContent 读取并分析章节页面，得到全部资源url
@@ -76,7 +77,7 @@ func downloadImage(url, aid string) (string, error) {
 	comicPath := filepath.Join(config.I8COMIC_PATH, aid)
 	os.MkdirAll(comicPath, 0755)
 
-	imagePath := filepath.Join(comicPath, filename)
+	imagePath := filepath.Join(comicPath, strings.TrimSuffix(filename, filepath.Ext(filename))+".png")
 	file, err := os.Create(imagePath)
 	if err != nil {
 		return "", err
